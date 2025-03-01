@@ -1,0 +1,73 @@
+.desktopView {
+  display: block;
+}
+
+.tableHeader {
+  display: flex;
+  font-weight: 500;
+  font-size: 20px;
+  font-family: "Lato", sans-serif;
+}
+
+.headerCell {
+  flex: 1;
+  text-align: left;
+  margin-bottom: 64px;
+}
+
+.tableRow {
+  display: flex;
+}
+
+.tableCell {
+  flex: 1;
+  padding: 0px 0px 29px 0px;
+  text-align: left;
+  display: flex;
+  align-items: center;
+}
+
+.mobileView {
+  display: none;
+}
+
+.mobileTableRow {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 24px;
+  margin-bottom: 16px;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 16px;
+  width: 100%;
+}
+
+.mobileTableCell {
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+}
+
+.cellValue {
+  font-family: "Lato", sans-serif;
+  font-weight: 500;
+  font-size: 14px;
+  margin-bottom: 4px;
+  opacity: 0.6;
+}
+
+.cellHeading {
+  font-family: "Lato", sans-serif;
+  font-weight: 400;
+  font-size: 14px;
+  color: rgba(0, 0, 0, 1);
+}
+
+@media (max-width: 1000px) {
+  .desktopView {
+    display: none !important;
+  }
+
+  .mobileView {
+    display: block !important;
+  }
+}

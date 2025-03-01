@@ -1,0 +1,28 @@
+.contentbox {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 16px;
+  padding: 24px 31px;
+  display: flex;
+  flex-direction: column;
+  gap: 46px;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+}
+.contentboxHeaderTitle {
+  font-family: "Lato", sans-serif;
+  font-weight: 500;
+  font-size: 20px;
+}
+.contentboxHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+@media screen and (max-width: 1000px) {
+  .contentbox {
+    padding: 24px 20px;
+  }
+  .contentboxHeaderTitle {
+    font-size: 16px;
+  }
+}

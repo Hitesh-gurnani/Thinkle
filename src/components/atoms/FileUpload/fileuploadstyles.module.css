@@ -1,0 +1,60 @@
+.fileUploadContainer {
+  position: relative;
+  width: 100%;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.label {
+  display: block;
+  font-weight: 500;
+  font-size: 0.875rem;
+  color: #374151;
+}
+
+.fileUploadTrigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 14px 16px;
+  background-color: rgba(245, 247, 249, 1);
+  border: 1px solid #d1d5db;
+  border-radius: 9px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+}
+
+.fileUploadTrigger:hover {
+  border-color: #9ca3af;
+}
+
+.fileUploadTrigger:focus {
+  outline: none;
+  border-color: #2563eb;
+  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
+}
+
+.uploadIcon {
+  color: #6b7280;
+}
+
+.placeholder {
+  color: #9ca3af;
+}
+
+.selectedText {
+  color: #111827;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: calc(100% - 30px);
+}
+
+.hiddenInput {
+  display: none;
+}

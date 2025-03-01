@@ -1,0 +1,62 @@
+.uploadContent {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 16px;
+  padding: 24px 31px;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+}
+.uploadContentHeaderTitle {
+  font-family: "Lato", sans-serif;
+  font-weight: 500;
+  font-size: 20px;
+}
+.uploadContentHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.uploadContentBody {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 24px 65px;
+  margin-top: 24px;
+}
+
+.uploadContentBodyNested {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0px 9px;
+}
+
+.uploadContentBodyNestedDropdown :global(.dropdownTrigger) {
+  font-size: 16px;
+  border-radius: 12px;
+  background-color: rgba(245, 247, 249, 1);
+  border: 1px solid rgba(221, 221, 221, 1);
+}
+
+.uploadContentButton {
+  margin-top: 24px;
+  align-self: flex-end;
+}
+.dropdown {
+  background-color: rgba(245, 247, 249, 1);
+}
+
+@media screen and (max-width: 768px) {
+  .uploadContentBody {
+    grid-template-columns: repeat(1, 1fr);
+  }
+  .uploadContentBodyNested {
+    grid-template-columns: repeat(1, 1fr);
+    gap: 24px 65px;
+  }
+  .uploadContentHeaderTitle {
+    font-size: 16px;
+  }
+  .uploadContentBody {
+    margin-top: 40px;
+  }
+}

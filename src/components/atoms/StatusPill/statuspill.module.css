@@ -1,0 +1,24 @@
+.statusPill {
+  padding: 8px 12px;
+  border-radius: 8px;
+  background-color: #34ba3b33;
+  font-size: 14px;
+  font-weight: 400;
+  font-family: "Lato", sans-serif;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  width: 100px;
+  margin-top: 0;
+}
+
+@media (max-width: 768px) {
+  .statusPill {
+    background-color: #34ba3b33;
+    font-size: 12px;
+    border-radius: 4px;
+    max-width: max-content;
+    padding: 4px 8px;
+  }
+}
