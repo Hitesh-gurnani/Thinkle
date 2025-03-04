@@ -69,5 +69,3 @@ The built files will be available in the `dist/` directory.
 ├── README.md         # Project documentation
 └── vite.config.js    # Vite configuration
 ```
-
-MIT

@@ -3,6 +3,7 @@ import styles from "./app.module.css";
 import ContentSubmission from "./components/organisms/ContentManagement/ContentSubmission";
 import Sidebar from "./components/organisms/Sidebar/Sidebar";
 import UploadContent from "./components/organisms/UploadNewContent/UploadContent";
+import Chat from "./Chat/Chat";
 
 function App() {
   return (
@@ -14,6 +15,21 @@ function App() {
           <Route path="/coaches" element={<div>Coaches</div>} />
           <Route path="/dashboard" element={<div>Dashboard</div>} />
           <Route path="/earnings" element={<div>Earnings</div>} />
+          <Route
+            path="/messages"
+            element={
+              <div className="">
+                {" "}
+                <div>
+                  <div className={styles.title}>Messages</div>
+                  <div className={styles.subheading}>
+                    Manage your messages here
+                  </div>
+                </div>
+                <Chat />
+              </div>
+            }
+          />
           <Route
             path="/submissions"
             element={

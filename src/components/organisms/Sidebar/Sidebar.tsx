@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import styles from "./sidebarstyles.module.css";
 import { GrDown } from "react-icons/gr";
 import { BsHouseDoorFill } from "react-icons/bs";
-import { FaWallet, FaUserCircle, FaUser } from "react-icons/fa";
+import { FaWallet, FaUserCircle, FaUser, FaComment } from "react-icons/fa";
 import { IoMdTrendingUp } from "react-icons/io";
 import { RiFolderSharedLine } from "react-icons/ri";
 import { IoHelpCircleSharp, IoColorWandSharp } from "react-icons/io5";
@@ -24,6 +24,11 @@ const NAV_ITEMS = [
         name: "Dashboard",
         icon: <BsHouseDoorFill size={20} />,
         route: "/dashboard",
+      },
+      {
+        name: "Messages",
+        icon: <FaComment size={20} />,
+        route: "/messages",
       },
       {
         name: "Submission",
