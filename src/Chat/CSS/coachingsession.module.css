@@ -1,0 +1,44 @@
+.coachingSessionContainer {
+  background-color: rgba(29, 31, 33, 1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 10px;
+  padding: 20px 12px;
+}
+
+.sessionTitle {
+  color: rgba(245, 245, 245, 1);
+  font-family: Avenir;
+  font-weight: 700;
+  font-size: 14px;
+  line-height: 16.8px;
+  letter-spacing: 0%;
+  text-align: left;
+  width: calc(100% - 46px);
+}
+
+.sessionButton {
+  background-color: rgba(246, 246, 246, 1);
+  color: black;
+  font-family: Avenir;
+  font-weight: 800;
+  font-size: 16px;
+  line-height: 20.8px;
+  letter-spacing: 0px;
+  width: 100%;
+  margin-top: 16px;
+}
+
+.coachAvatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+}
+.sessionHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}

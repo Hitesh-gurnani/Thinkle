@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import styles from "../CSS/messagareastyles.module.css";
+import CochingSessionUI from "./CochingSessionUI";
 
 function MessageArea({ selectedChatId }) {
   const [messages, setMessages] = useState([]);
@@ -18,30 +19,35 @@ function MessageArea({ selectedChatId }) {
         content: "Hey there! How are you doing?",
         sender: "other",
         timestamp: new Date(Date.now() - 3600000 * 24),
+        isSession: true,
       },
       {
         id: 2,
         content: "I'm good, thanks for asking! How about you?",
         sender: "self",
         timestamp: new Date(Date.now() - 3600000 * 23),
+        isSession: false,
       },
       {
         id: 3,
         content: "Just working on this new project. It's coming along nicely!",
         sender: "other",
         timestamp: new Date(Date.now() - 1800000),
+        isSession: true,
       },
       {
         id: 4,
         content: "That sounds great! Would love to see it when it's ready.",
         sender: "self",
         timestamp: new Date(Date.now() - 900000),
+        isSession: true,
       },
       {
         id: 5,
         content: "Sure thing! I'll share it with you soon.",
         sender: "other",
         timestamp: new Date(),
+        isSession: true,
       },
     ];
     setMessages(mockMessages);
@@ -99,8 +105,7 @@ function MessageArea({ selectedChatId }) {
           </div>
           {dateMessages.map((message, index) => {
             const showAvatar =
-              message.sender === "other" &&
-              (index === 0 || dateMessages[index - 1].sender !== "other");
+              index === 0 || dateMessages[index - 1].sender !== message.sender;
 
             return (
               <div
@@ -111,9 +116,17 @@ function MessageArea({ selectedChatId }) {
                     : styles.otherMessage
                 }`}
               >
-                {message.sender === "other" && showAvatar && (
+                {showAvatar && (
                   <div className={styles.messageSenderAvatar}>
-                    <div className={styles.avatarCircle}></div>
+                    <div className={styles.avatarCircle}>
+                      {message.avatar ? (
+                        <img src={message.avatar} alt={message.sender} />
+                      ) : message.sender === "self" ? (
+                        "Y"
+                      ) : (
+                        "J"
+                      )}
+                    </div>
                   </div>
                 )}
                 <div className={styles.messageContentWrapper}>
@@ -126,9 +139,13 @@ function MessageArea({ selectedChatId }) {
                       {formatTime(message.timestamp)}
                     </span>
                   </div>
-                  <div className={styles.messageContent}>
-                    <p>{message.content}</p>
-                  </div>
+                  {message.isSession && message.sender === "self" ? (
+                    <CochingSessionUI />
+                  ) : (
+                    <div className={styles.messageContent}>
+                      <p>{message.content}</p>
+                    </div>
+                  )}
                 </div>
               </div>
             );
