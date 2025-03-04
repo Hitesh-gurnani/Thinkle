@@ -266,6 +266,15 @@
   padding: 16px;
 }
 
+.chatMessage {
+  font-family: Lato;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 16.8px;
+  letter-spacing: -5%;
+  opacity: 50%;
+}
+
 @media (max-width: 768px) {
   .chatList,
   .chatContainer {
