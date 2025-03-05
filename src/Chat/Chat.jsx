@@ -12,6 +12,7 @@ function Chat() {
   const [isMobileView, setIsMobileView] = useState(window.innerWidth < 768);
   const [chatList, setChatList] = useState([]);
   const [newMessage, setNewMessage] = useState(null);
+  const [replyToMessage, setReplyToMessage] = useState(null);
 
   useEffect(() => {
     const chatData = [
@@ -305,7 +306,6 @@ function Chat() {
   const handleMessageSent = (message) => {
     setNewMessage(message);
 
-    // Update the last message in chat list
     setChatList((prevList) => {
       return prevList.map((chat) => {
         if (chat._id === selectedChat) {
@@ -324,6 +324,14 @@ function Chat() {
     });
   };
 
+  const handleReplyToMessage = (message) => {
+    setReplyToMessage(message);
+  };
+
+  const handleCancelReply = () => {
+    setReplyToMessage(null);
+  };
+
   return (
     <div className={styles.chatmain}>
       {isMobileView && selectedChat ? (
@@ -336,10 +344,16 @@ function Chat() {
             onBack={handleBackToList}
             showBackButton={true}
           />
-          <MessageArea selectedChatId={selectedChat} newMessage={newMessage} />
+          <MessageArea
+            selectedChatId={selectedChat}
+            newMessage={newMessage}
+            onReplyToMessage={handleReplyToMessage}
+          />
           <MessageInput
             selectedChatId={selectedChat}
             onMessageSent={handleMessageSent}
+            replyToMessage={replyToMessage}
+            onCancelReply={handleCancelReply}
           />
         </div>
       ) : isMobileView ? (
@@ -372,10 +386,13 @@ function Chat() {
                 <MessageArea
                   selectedChatId={selectedChat}
                   newMessage={newMessage}
+                  onReplyToMessage={handleReplyToMessage}
                 />
                 <MessageInput
                   selectedChatId={selectedChat}
                   onMessageSent={handleMessageSent}
+                  replyToMessage={replyToMessage}
+                  onCancelReply={handleCancelReply}
                 />
               </>
             ) : (

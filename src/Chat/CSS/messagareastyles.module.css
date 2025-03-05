@@ -85,6 +85,13 @@
 .messageContentWrapper {
   flex: 1;
   max-width: calc(100% - 40px);
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.otherMessage .messageContentWrapper {
+  width: 100%;
 }
 
 .messageContent {
@@ -92,6 +99,7 @@
   border-radius: 18px;
   position: relative;
   word-break: break-word;
+  flex: 1;
 }
 
 .otherMessage .messageContent {
@@ -132,4 +140,111 @@
 
 .messageTime {
   font-size: 0.75rem;
+}
+
+.messageActions {
+  display: none;
+  align-items: center;
+  gap: 2px;
+  margin-top: 20px;
+  margin-left: 12px;
+  align-self: center;
+  height: 100%;
+}
+
+.otherMessage .messageActions {
+  display: flex;
+}
+
+.selfMessage .messageActions {
+  display: none;
+}
+
+.actionButton {
+  background: none;
+  border: none;
+  color: #666;
+  padding: 4px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.actionButton:hover {
+  color: #3b82f6;
+}
+
+.emojiPickerContainer {
+  position: absolute;
+  bottom: 30px;
+  right: 0;
+  z-index: 10;
+}
+
+.selfMessage .emojiPickerContainer {
+  right: auto;
+  left: 0;
+}
+
+.reactionsContainer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 4px;
+}
+
+.reaction {
+  display: flex;
+  align-items: center;
+  background-color: rgba(0, 0, 0, 0.05);
+  border-radius: 12px;
+  padding: 2px 6px;
+  font-size: 12px;
+}
+
+.reactionEmoji {
+  font-size: 14px;
+  margin-right: 2px;
+}
+
+.reactionCount {
+  font-size: 11px;
+  color: #666;
+}
+
+.replyPreview {
+  display: flex;
+  margin-bottom: 6px;
+  padding: 4px 0;
+  border-left: 2px solid #3b82f6;
+  padding-left: 8px;
+  background-color: rgba(59, 130, 246, 0.05);
+  border-radius: 4px;
+}
+
+.replyContent {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.replySender {
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.replyText {
+  font-size: 12px;
+  color: #666;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin: 0;
+}
+
+.messageColumn {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
 }

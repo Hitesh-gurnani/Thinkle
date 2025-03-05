@@ -1,42 +1,103 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import styles from "../CSS/chatmain.module.css";
 import Button from "../../components/atoms/Button/Button";
 import { FaRegImage } from "react-icons/fa6";
 import { CiFaceSmile } from "react-icons/ci";
+import { MdClose } from "react-icons/md";
 
-function MessageInput({ selectedChatId, onMessageSent }) {
+function MessageInput({
+  selectedChatId,
+  onMessageSent,
+  replyToMessage,
+  onCancelReply,
+}) {
   const [message, setMessage] = useState("");
+  const fileInputRef = useRef(null);
 
   const handleMessageChange = (e) => {
     setMessage(e.target.value);
   };
 
   const handleSendMessage = () => {
-    if (message.trim() && selectedChatId) {
+    if (
+      (message.trim() || fileInputRef.current.files.length > 0) &&
+      selectedChatId
+    ) {
+      if (message.trim()) {
+        sendTextMessage(message);
+      }
+
+      if (fileInputRef.current.files.length > 0) {
+        Array.from(fileInputRef.current.files).forEach((file) => {
+          sendFileMessage(file);
+        });
+        fileInputRef.current.value = ""; // Clear the file input
+      }
+
+      // Clear reply after sending
+      if (onCancelReply && replyToMessage) {
+        onCancelReply();
+      }
+    }
+  };
+
+  const sendTextMessage = (text) => {
+    const messagePayload = {
+      id: Date.now(),
+      uuid: selectedChatId,
+      ucid: 1,
+      sender: "self",
+      receiver: selectedChatId,
+      content: text,
+      messageContent: text,
+      type: "Text",
+      replyTo: replyToMessage ? replyToMessage.id : null,
+      timestamp: new Date(),
+      isSession: false,
+    };
+
+    saveAndSendMessage(messagePayload);
+    setMessage("");
+  };
+
+  const sendFileMessage = (file) => {
+    const fileType = file.type.startsWith("image/") ? "Image" : "PDF";
+
+    // Read the file as data URL
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const fileData = e.target.result;
+
       const messagePayload = {
         id: Date.now(),
         uuid: selectedChatId,
         ucid: 1,
         sender: "self",
         receiver: selectedChatId,
-        content: message,
-        messageContent: message,
-        type: "Text",
-        replyTo: null,
+        content: file.name,
+        messageContent: file.name,
+        fileData: fileData,
+        fileName: file.name,
+        fileSize: file.size,
+        type: fileType,
+        replyTo: replyToMessage ? replyToMessage.id : null,
         timestamp: new Date(),
         isSession: false,
       };
 
-      const chatKey = `chat_${selectedChatId}`;
-      const existingMessages = JSON.parse(
-        localStorage.getItem(chatKey) || "[]"
-      );
-      existingMessages.push(messagePayload);
-      localStorage.setItem(chatKey, JSON.stringify(existingMessages));
-      if (onMessageSent) {
-        onMessageSent(messagePayload);
-      }
-      setMessage("");
+      saveAndSendMessage(messagePayload);
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const saveAndSendMessage = (messagePayload) => {
+    const chatKey = `chat_${selectedChatId}`;
+    const existingMessages = JSON.parse(localStorage.getItem(chatKey) || "[]");
+    existingMessages.push(messagePayload);
+    localStorage.setItem(chatKey, JSON.stringify(existingMessages));
+
+    if (onMessageSent) {
+      onMessageSent(messagePayload);
     }
   };
 
@@ -47,8 +108,25 @@ function MessageInput({ selectedChatId, onMessageSent }) {
     }
   };
 
+  const handleFileIconClick = () => {
+    fileInputRef.current.click();
+  };
+
   return (
     <div className={styles.messageInput}>
+      {replyToMessage && (
+        <div className={styles.replyPreviewContainer}>
+          <div className={styles.replyInfo}>
+            <div className={styles.replyLabel}>Replying to {"John Doe"}</div>
+            <div className={styles.replyPreviewText}>
+              {replyToMessage.content}
+            </div>
+          </div>
+          <button className={styles.cancelReplyButton} onClick={onCancelReply}>
+            <MdClose size={16} />
+          </button>
+        </div>
+      )}
       <div className={styles.inputContainer}>
         <div className={styles.textareaWrapper}>
           <textarea
@@ -61,7 +139,17 @@ function MessageInput({ selectedChatId, onMessageSent }) {
           />
           <div className={styles.inputActions}>
             <div className={styles.actionButtons}>
-              <FaRegImage size={20} />
+              <div onClick={handleFileIconClick} style={{ cursor: "pointer" }}>
+                <FaRegImage size={20} />
+              </div>
+              <input
+                type="file"
+                ref={fileInputRef}
+                style={{ display: "none" }}
+                accept="image/*,.pdf"
+                multiple
+                onChange={() => {}}
+              />
               <CiFaceSmile size={20} />
             </div>
             <Button className={styles.sendButton} onClick={handleSendMessage}>

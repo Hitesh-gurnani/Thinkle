@@ -1,16 +1,36 @@
 import React, { useState, useEffect, useRef } from "react";
 import styles from "../CSS/messagareastyles.module.css";
 import CochingSessionUI from "./CochingSessionUI";
+import { FaReply, FaRegSmile } from "react-icons/fa";
+import EmojiPicker from "emoji-picker-react";
 
-function MessageArea({ selectedChatId, newMessage }) {
+function MessageArea({ selectedChatId, newMessage, onReplyToMessage }) {
   const [messages, setMessages] = useState([]);
+  const [showEmojiPicker, setShowEmojiPicker] = useState(null);
   const messagesEndRef = useRef(null);
+  const emojiPickerRef = useRef(null);
+
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
+
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (
+        emojiPickerRef.current &&
+        !emojiPickerRef.current.contains(event.target)
+      ) {
+        setShowEmojiPicker(null);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   useEffect(() => {
     if (selectedChatId) {
@@ -71,6 +91,58 @@ function MessageArea({ selectedChatId, newMessage }) {
     }
   }, [newMessage, selectedChatId]);
 
+  const handleReplyClick = (message) => {
+    if (onReplyToMessage) {
+      onReplyToMessage(message);
+    }
+  };
+
+  const handleEmojiClick = (messageId, emojiObj) => {
+    const emoji = emojiObj.emoji;
+
+    setMessages((prevMessages) =>
+      prevMessages.map((message) => {
+        if (message.id === messageId) {
+          const reactions = message.reactions || {};
+          const currentCount = reactions[emoji] || 0;
+
+          return {
+            ...message,
+            reactions: {
+              ...reactions,
+              [emoji]: currentCount + 1,
+            },
+          };
+        }
+        return message;
+      })
+    );
+
+    const chatKey = `chat_${selectedChatId}`;
+    localStorage.setItem(
+      chatKey,
+      JSON.stringify(
+        messages.map((message) => {
+          if (message.id === messageId) {
+            const reactions = message.reactions || {};
+            const currentCount = reactions[emoji] || 0;
+
+            return {
+              ...message,
+              reactions: {
+                ...reactions,
+                [emoji]: currentCount + 1,
+              },
+            };
+          }
+          return message;
+        })
+      )
+    );
+
+    setShowEmojiPicker(null);
+  };
+
   const formatTime = (timestamp) => {
     const date = timestamp instanceof Date ? timestamp : new Date(timestamp);
     if (isNaN(date.getTime())) {
@@ -112,6 +184,98 @@ function MessageArea({ selectedChatId, newMessage }) {
     return groups;
   }, {});
 
+  const renderReplyContent = (replyToMessage) => {
+    if (!replyToMessage) return null;
+
+    return (
+      <div className={styles.replyPreview}>
+        <div className={styles.replyLine}></div>
+        <div className={styles.replyContent}>
+          <span className={styles.replySender}>
+            {replyToMessage.sender === "self" ? "You" : "John Doe"}
+          </span>
+          <p className={styles.replyText}>{replyToMessage.content}</p>
+        </div>
+      </div>
+    );
+  };
+
+  const renderReactions = (reactions) => {
+    if (!reactions || Object.keys(reactions).length === 0) return null;
+
+    return (
+      <div className={styles.reactionsContainer}>
+        {Object.entries(reactions).map(([emoji, count]) => (
+          <div key={emoji} className={styles.reaction}>
+            <span className={styles.reactionEmoji}>{emoji}</span>
+            {count > 1 && <span className={styles.reactionCount}>{count}</span>}
+          </div>
+        ))}
+      </div>
+    );
+  };
+
+  const renderMessageContent = (message) => {
+    if (message.isSession && message.sender === "self") {
+      return <CochingSessionUI />;
+    }
+
+    let replyToMessage = null;
+    if (message.replyTo) {
+      replyToMessage = messages.find((msg) => msg.id === message.replyTo);
+    }
+
+    let content;
+    switch (message.type) {
+      case "Image":
+        content = (
+          <div className={styles.messageContent}>
+            {replyToMessage && renderReplyContent(replyToMessage)}
+            <div className={styles.imageContainer}>
+              <img
+                src={message.fileData}
+                alt={message.fileName}
+                className={styles.messageImage}
+              />
+            </div>
+            <p className={styles.fileName}>{message.fileName}</p>
+          </div>
+        );
+        break;
+      case "PDF":
+        content = (
+          <div className={styles.messageContent}>
+            {replyToMessage && renderReplyContent(replyToMessage)}
+            <div className={styles.pdfContainer}>
+              <a
+                href={message.fileData}
+                download={message.fileName}
+                className={styles.pdfLink}
+              >
+                <div className={styles.pdfIcon}>PDF</div>
+                <p className={styles.fileName}>{message.fileName}</p>
+              </a>
+            </div>
+          </div>
+        );
+        break;
+      default:
+        content = (
+          <div className={styles.messageContent}>
+            {replyToMessage && renderReplyContent(replyToMessage)}
+            <p>{message.content}</p>
+          </div>
+        );
+    }
+
+    return (
+      <>
+        {content}
+        {renderReactions(message.reactions)}
+      </>
+    );
+  };
+
   return (
     <div className={styles.messageArea}>
       {Object.entries(groupedMessages).map(([date, dateMessages]) => (
@@ -146,22 +310,48 @@ function MessageArea({ selectedChatId, newMessage }) {
                   </div>
                 )}
                 <div className={styles.messageContentWrapper}>
-                  <div className={styles.messageHeader}>
-                    <span className={styles.senderName}>
-                      {message.sender === "self" ? "You" : "John Doe"}
-                    </span>
-                    <span className={styles.dotSeparator}>•</span>
-                    <span className={styles.messageTime}>
-                      {formatTime(message.timestamp)}
-                    </span>
-                  </div>
-                  {message.isSession && message.sender === "self" ? (
-                    <CochingSessionUI />
-                  ) : (
-                    <div className={styles.messageContent}>
-                      <p>{message.content}</p>
+                  <div className={styles.messageColumn}>
+                    <div className={styles.messageHeader}>
+                      <span className={styles.senderName}>
+                        {message.sender === "self" ? "You" : "John Doe"}
+                      </span>
+                      <span className={styles.dotSeparator}>•</span>
+                      <span className={styles.messageTime}>
+                        {formatTime(message.timestamp)}
+                      </span>
                     </div>
-                  )}
+                    {renderMessageContent(message)}
+                  </div>
+
+                  <div className={styles.messageActions}>
+                    <button
+                      className={styles.actionButton}
+                      onClick={() => handleReplyClick(message)}
+                    >
+                      <FaReply size={14} />
+                    </button>
+                    <button
+                      className={styles.actionButton}
+                      onClick={() => setShowEmojiPicker(message.id)}
+                    >
+                      <FaRegSmile size={14} />
+                    </button>
+
+                    {showEmojiPicker === message.id && (
+                      <div
+                        className={styles.emojiPickerContainer}
+                        ref={emojiPickerRef}
+                      >
+                        <EmojiPicker
+                          onEmojiClick={(emojiObj) =>
+                            handleEmojiClick(message.id, emojiObj)
+                          }
+                          width={280}
+                          height={350}
+                        />
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
             );

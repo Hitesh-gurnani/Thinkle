@@ -289,3 +289,50 @@
     max-width: 91px;
   }
 }
+
+.replyPreviewContainer {
+  display: flex;
+  align-items: center;
+  padding: 8px 15px;
+
+  border-left: 3px solid #3b82f6;
+  margin-bottom: 5px;
+  justify-content: space-between;
+}
+
+.replyInfo {
+  flex: 1;
+  overflow: hidden;
+}
+
+.replyLabel {
+  font-size: 12px;
+  margin-bottom: 2px;
+  font-weight: 400;
+  color: rgba(0, 0, 0, 1);
+  opacity: 40%;
+}
+
+.replyPreviewText {
+  font-size: 12px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+.cancelReplyButton {
+  background: none;
+  border: none;
+  color: #666;
+  cursor: pointer;
+  padding: 2px;
+  margin-left: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cancelReplyButton:hover {
+  color: #333;
+}
