@@ -11,6 +11,7 @@ function Chat() {
   const [selectedChat, setSelectedChat] = useState(null);
   const [isMobileView, setIsMobileView] = useState(window.innerWidth < 768);
   const [chatList, setChatList] = useState([]);
+  const [newMessage, setNewMessage] = useState(null);
 
   useEffect(() => {
     const chatData = [
@@ -301,6 +302,28 @@ function Chat() {
     });
   };
 
+  const handleMessageSent = (message) => {
+    setNewMessage(message);
+
+    // Update the last message in chat list
+    setChatList((prevList) => {
+      return prevList.map((chat) => {
+        if (chat._id === selectedChat) {
+          return {
+            ...chat,
+            lastMessage: {
+              _id: message.id,
+              messageContent: message.content,
+              type: message.type,
+              createdAt: message.timestamp,
+            },
+          };
+        }
+        return chat;
+      });
+    });
+  };
+
   return (
     <div className={styles.chatmain}>
       {isMobileView && selectedChat ? (
@@ -308,13 +331,16 @@ function Chat() {
           <ChatHeader
             title={chatList.find((chat) => chat._id === selectedChat)?.fullname}
             profileImage={
-              chatList.find((chat) => chat._id === selectedChat)?.avatar.url
+              chatList.find((chat) => chat._id === selectedChat)?.avatar?.url
             }
             onBack={handleBackToList}
             showBackButton={true}
           />
-          <MessageArea selectedChatId={selectedChat} />
-          <MessageInput />
+          <MessageArea selectedChatId={selectedChat} newMessage={newMessage} />
+          <MessageInput
+            selectedChatId={selectedChat}
+            onMessageSent={handleMessageSent}
+          />
         </div>
       ) : isMobileView ? (
         <ChatList
@@ -339,12 +365,18 @@ function Chat() {
                   }
                   profileImage={
                     chatList.find((chat) => chat._id === selectedChat)?.avatar
-                      .url
+                      ?.url
                   }
                   showBackButton={false}
                 />
-                <MessageArea selectedChatId={selectedChat} />
-                <MessageInput />
+                <MessageArea
+                  selectedChatId={selectedChat}
+                  newMessage={newMessage}
+                />
+                <MessageInput
+                  selectedChatId={selectedChat}
+                  onMessageSent={handleMessageSent}
+                />
               </>
             ) : (
               <NoSelection />

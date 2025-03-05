@@ -4,7 +4,7 @@ import Button from "../../components/atoms/Button/Button";
 import { FaRegImage } from "react-icons/fa6";
 import { CiFaceSmile } from "react-icons/ci";
 
-function MessageInput({ selectedChatId }) {
+function MessageInput({ selectedChatId, onMessageSent }) {
   const [message, setMessage] = useState("");
 
   const handleMessageChange = (e) => {
@@ -12,14 +12,29 @@ function MessageInput({ selectedChatId }) {
   };
 
   const handleSendMessage = () => {
-    if (message.trim()) {
-      console.log("Sending message:", message);
+    if (message.trim() && selectedChatId) {
       const messagePayload = {
+        id: Date.now(),
+        uuid: selectedChatId,
+        ucid: 1,
+        sender: "self",
+        receiver: selectedChatId,
+        content: message,
         messageContent: message,
         type: "Text",
+        replyTo: null,
+        timestamp: new Date(),
+        isSession: false,
       };
-      if (window.addChatMessage && selectedChatId) {
-        window.addChatMessage(selectedChatId, message);
+
+      const chatKey = `chat_${selectedChatId}`;
+      const existingMessages = JSON.parse(
+        localStorage.getItem(chatKey) || "[]"
+      );
+      existingMessages.push(messagePayload);
+      localStorage.setItem(chatKey, JSON.stringify(existingMessages));
+      if (onMessageSent) {
+        onMessageSent(messagePayload);
       }
       setMessage("");
     }
