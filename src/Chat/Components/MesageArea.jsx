@@ -104,20 +104,32 @@ function MessageArea({ selectedChatId, newMessage, onReplyToMessage }) {
       prevMessages.map((message) => {
         if (message.id === messageId) {
           const reactions = message.reactions || {};
-          const currentCount = reactions[emoji] || 0;
 
-          return {
-            ...message,
-            reactions: {
-              ...reactions,
-              [emoji]: currentCount + 1,
-            },
-          };
+          if (reactions[emoji]) {
+            const { [emoji]: removedEmoji, ...remainingReactions } = reactions;
+
+            return {
+              ...message,
+              reactions:
+                removedEmoji > 1
+                  ? { ...reactions, [emoji]: removedEmoji - 1 }
+                  : remainingReactions,
+            };
+          } else {
+            return {
+              ...message,
+              reactions: {
+                ...reactions,
+                [emoji]: 1,
+              },
+            };
+          }
         }
         return message;
       })
     );
 
+    // Update in localStorage
     const chatKey = `chat_${selectedChatId}`;
     localStorage.setItem(
       chatKey,
@@ -125,15 +137,26 @@ function MessageArea({ selectedChatId, newMessage, onReplyToMessage }) {
         messages.map((message) => {
           if (message.id === messageId) {
             const reactions = message.reactions || {};
-            const currentCount = reactions[emoji] || 0;
-
-            return {
-              ...message,
-              reactions: {
-                ...reactions,
-                [emoji]: currentCount + 1,
-              },
-            };
+            if (reactions[emoji]) {
+              // If emoji exists, remove it or decrease count
+              const { [emoji]: removedEmoji, ...remainingReactions } =
+                reactions;
+              return {
+                ...message,
+                reactions:
+                  removedEmoji > 1
+                    ? { ...reactions, [emoji]: removedEmoji - 1 }
+                    : remainingReactions,
+              };
+            } else {
+              return {
+                ...message,
+                reactions: {
+                  ...reactions,
+                  [emoji]: 1,
+                },
+              };
+            }
           }
           return message;
         })
@@ -200,13 +223,18 @@ function MessageArea({ selectedChatId, newMessage, onReplyToMessage }) {
     );
   };
 
-  const renderReactions = (reactions) => {
+  const renderReactions = (reactions, messageId) => {
     if (!reactions || Object.keys(reactions).length === 0) return null;
 
     return (
       <div className={styles.reactionsContainer}>
         {Object.entries(reactions).map(([emoji, count]) => (
-          <div key={emoji} className={styles.reaction}>
+          <div
+            key={emoji}
+            className={styles.reaction}
+            onClick={() => handleEmojiClick(messageId, { emoji })}
+            title="Click to remove reaction"
+          >
             <span className={styles.reactionEmoji}>{emoji}</span>
             {count > 1 && <span className={styles.reactionCount}>{count}</span>}
           </div>
@@ -232,11 +260,17 @@ function MessageArea({ selectedChatId, newMessage, onReplyToMessage }) {
           <div className={styles.messageContent}>
             {replyToMessage && renderReplyContent(replyToMessage)}
             <div className={styles.imageContainer}>
-              <img
-                src={message.fileData}
-                alt={message.fileName}
-                className={styles.messageImage}
-              />
+              <a
+                href={message.fileData}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <img
+                  src={message.fileData}
+                  alt={message.fileName}
+                  className={styles.messageImage}
+                />
+              </a>
             </div>
             <p className={styles.fileName}>{message.fileName}</p>
           </div>
@@ -252,8 +286,17 @@ function MessageArea({ selectedChatId, newMessage, onReplyToMessage }) {
                 download={message.fileName}
                 className={styles.pdfLink}
               >
-                <div className={styles.pdfIcon}>PDF</div>
-                <p className={styles.fileName}>{message.fileName}</p>
+                <div className={styles.pdfWrapper}>
+                  <div className={styles.pdfIconContainer}>
+                    <div className={styles.pdfIcon}>PDF</div>
+                  </div>
+                  <div className={styles.pdfInfo}>
+                    <p className={styles.pdfFileName}>{message.fileName}</p>
+                    <p className={styles.pdfFileSize}>
+                      {formatFileSize(message.fileSize || 0)}
+                    </p>
+                  </div>
+                </div>
               </a>
             </div>
           </div>
@@ -271,9 +314,19 @@ function MessageArea({ selectedChatId, newMessage, onReplyToMessage }) {
     return (
       <>
         {content}
-        {renderReactions(message.reactions)}
+        {renderReactions(message.reactions, message.id)}
       </>
     );
+  };
+
+  // Helper function to format file size
+  const formatFileSize = (bytes) => {
+    if (bytes === 0) return "0 Bytes";
+
+    const sizes = ["Bytes", "KB", "MB", "GB", "TB"];
+    const i = Math.floor(Math.log(bytes) / Math.log(1024));
+
+    return parseFloat((bytes / Math.pow(1024, i)).toFixed(2)) + " " + sizes[i];
   };
 
   return (

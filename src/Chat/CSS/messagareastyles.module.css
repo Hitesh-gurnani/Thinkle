@@ -248,3 +248,76 @@
   flex-direction: column;
   flex: 1;
 }
+
+.pdfContainer {
+  margin: 5px 0;
+}
+
+.pdfLink {
+  text-decoration: none;
+  color: inherit;
+  display: block;
+}
+
+.pdfWrapper {
+  display: flex;
+  align-items: center;
+  border-radius: 8px;
+  overflow: hidden;
+  background-color: #f8f9fa;
+  border: 1px solid #e0e0e0;
+  padding: 8px;
+}
+
+.pdfIconContainer {
+  margin-right: 12px;
+}
+
+.pdfIcon {
+  background-color: #f34636;
+  color: white;
+  font-weight: bold;
+  padding: 10px;
+  border-radius: 8px;
+  font-size: 14px;
+  text-align: center;
+  min-width: 40px;
+  min-height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pdfInfo {
+  flex: 1;
+  overflow: hidden;
+}
+
+.pdfFileName {
+  margin: 0 0 4px 0;
+  font-weight: 500;
+  font-size: 14px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.pdfFileSize {
+  margin: 0;
+  font-size: 12px;
+  color: #666;
+}
+
+.imageContainer {
+  max-width: 100%;
+  overflow: hidden;
+  border-radius: 8px;
+}
+
+.messageImage {
+  max-width: 100%;
+  max-height: 300px;
+  object-fit: contain;
+  border-radius: 8px;
+  cursor: pointer;
+}
