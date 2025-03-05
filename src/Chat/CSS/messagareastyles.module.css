@@ -100,6 +100,8 @@
   position: relative;
   word-break: break-word;
   flex: 1;
+  max-width: 100%;
+  overflow: hidden;
 }
 
 .otherMessage .messageContent {
@@ -251,26 +253,32 @@
 
 .pdfContainer {
   margin: 5px 0;
+  max-width: 100%;
+  width: auto;
 }
 
 .pdfLink {
   text-decoration: none;
   color: inherit;
   display: block;
+  max-width: 100%;
 }
 
 .pdfWrapper {
   display: flex;
   align-items: center;
-  border-radius: 8px;
-  overflow: hidden;
-  background-color: #f8f9fa;
-  border: 1px solid #e0e0e0;
-  padding: 8px;
+  width: 250px;
+  height: 73px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 1);
+  border: 1px solid rgba(220, 220, 220, 1);
+  padding: 12px;
+  box-sizing: border-box;
 }
 
 .pdfIconContainer {
   margin-right: 12px;
+  flex-shrink: 0;
 }
 
 .pdfIcon {
@@ -291,6 +299,9 @@
 .pdfInfo {
   flex: 1;
   overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 .pdfFileName {

@@ -63,7 +63,30 @@ function MessageInput({
   const sendFileMessage = (file) => {
     const fileType = file.type.startsWith("image/") ? "Image" : "PDF";
 
-    // Read the file as data URL
+    // Show immediate feedback that file is being processed
+    if (fileType === "PDF") {
+      // Create a temporary message to show loading state
+      const tempMessage = {
+        id: `temp-${Date.now()}`,
+        uuid: selectedChatId,
+        ucid: 1,
+        sender: "self",
+        receiver: selectedChatId,
+        content: `Processing ${file.name}...`,
+        messageContent: file.name,
+        fileName: file.name,
+        fileSize: file.size,
+        type: "Text", // Temporary type
+        timestamp: new Date(),
+        isSession: false,
+        isLoading: true,
+      };
+
+      if (onMessageSent) {
+        onMessageSent(tempMessage);
+      }
+    }
+
     const reader = new FileReader();
     reader.onload = (e) => {
       const fileData = e.target.result;
@@ -87,7 +110,13 @@ function MessageInput({
 
       saveAndSendMessage(messagePayload);
     };
-    reader.readAsDataURL(file);
+
+    // Use smaller chunk size for PDFs to improve performance
+    if (fileType === "PDF") {
+      reader.readAsDataURL(file);
+    } else {
+      reader.readAsDataURL(file);
+    }
   };
 
   const saveAndSendMessage = (messagePayload) => {

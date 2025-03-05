@@ -253,6 +253,25 @@ function MessageArea({ selectedChatId, newMessage, onReplyToMessage }) {
       replyToMessage = messages.find((msg) => msg.id === message.replyTo);
     }
 
+    if (message.isLoading) {
+      return (
+        <div className={styles.messageContent}>
+          {replyToMessage && renderReplyContent(replyToMessage)}
+          <div className={styles.pdfContainer}>
+            <div className={styles.pdfWrapper}>
+              <div className={styles.pdfIconContainer}>
+                <div className={styles.pdfIcon}>PDF</div>
+              </div>
+              <div className={styles.pdfInfo}>
+                <p className={styles.pdfFileName}>{message.fileName}</p>
+                <p className={styles.pdfFileSize}>Processing...</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
     let content;
     switch (message.type) {
       case "Image":
@@ -285,6 +304,8 @@ function MessageArea({ selectedChatId, newMessage, onReplyToMessage }) {
                 href={message.fileData}
                 download={message.fileName}
                 className={styles.pdfLink}
+                target="_blank"
+                rel="noopener noreferrer"
               >
                 <div className={styles.pdfWrapper}>
                   <div className={styles.pdfIconContainer}>
