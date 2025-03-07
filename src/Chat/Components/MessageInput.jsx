@@ -13,28 +13,34 @@ function MessageInput({
 }) {
   const [message, setMessage] = useState("");
   const fileInputRef = useRef(null);
+  const [selectedFiles, setSelectedFiles] = useState([]);
 
   const handleMessageChange = (e) => {
     setMessage(e.target.value);
   };
 
+  const handleFileChange = (e) => {
+    setSelectedFiles(Array.from(e.target.files));
+  };
+
+  const handleRemoveFile = (index) => {
+    setSelectedFiles((prevFiles) => prevFiles.filter((_, i) => i !== index));
+    fileInputRef.current.value = "";
+  };
+
   const handleSendMessage = () => {
-    if (
-      (message.trim() || fileInputRef.current.files.length > 0) &&
-      selectedChatId
-    ) {
+    if ((message.trim() || selectedFiles.length > 0) && selectedChatId) {
       if (message.trim()) {
         sendTextMessage(message);
       }
 
-      if (fileInputRef.current.files.length > 0) {
-        Array.from(fileInputRef.current.files).forEach((file) => {
-          sendFileMessage(file);
-        });
-        fileInputRef.current.value = ""; // Clear the file input
-      }
+      selectedFiles.forEach((file) => {
+        sendFileMessage(file);
+      });
 
-      // Clear reply after sending
+      setSelectedFiles([]);
+      fileInputRef.current.value = "";
+
       if (onCancelReply && replyToMessage) {
         onCancelReply();
       }
@@ -62,29 +68,23 @@ function MessageInput({
 
   const sendFileMessage = (file) => {
     const fileType = file.type.startsWith("image/") ? "Image" : "PDF";
+    const tempId = `temp-${Date.now()}`;
 
-    // Show immediate feedback that file is being processed
-    if (fileType === "PDF") {
-      // Create a temporary message to show loading state
-      const tempMessage = {
-        id: `temp-${Date.now()}`,
-        uuid: selectedChatId,
-        ucid: 1,
-        sender: "self",
-        receiver: selectedChatId,
-        content: `Processing ${file.name}...`,
-        messageContent: file.name,
-        fileName: file.name,
-        fileSize: file.size,
-        type: "Text", // Temporary type
-        timestamp: new Date(),
-        isSession: false,
-        isLoading: true,
-      };
+    const tempMessage = {
+      id: tempId,
+      uuid: selectedChatId,
+      sender: "self",
+      receiver: selectedChatId,
+      content: `Processing ${file.name}...`,
+      fileName: file.name,
+      fileSize: file.size,
+      type: fileType,
+      timestamp: new Date(),
+      isLoading: true,
+    };
 
-      if (onMessageSent) {
-        onMessageSent(tempMessage);
-      }
+    if (onMessageSent) {
+      onMessageSent(tempMessage);
     }
 
     const reader = new FileReader();
@@ -106,17 +106,14 @@ function MessageInput({
         replyTo: replyToMessage ? replyToMessage.id : null,
         timestamp: new Date(),
         isSession: false,
+        tempId,
+        isLoading: false,
       };
 
       saveAndSendMessage(messagePayload);
     };
 
-    // Use smaller chunk size for PDFs to improve performance
-    if (fileType === "PDF") {
-      reader.readAsDataURL(file);
-    } else {
-      reader.readAsDataURL(file);
-    }
+    reader.readAsDataURL(file);
   };
 
   const saveAndSendMessage = (messagePayload) => {
@@ -166,6 +163,31 @@ function MessageInput({
             onKeyDown={handleKeyPress}
             rows={1}
           />
+          {selectedFiles.length > 0 && (
+            <div className={styles.filePreviewContainer}>
+              {selectedFiles.map((file, index) => (
+                <div key={index} className={styles.filePreview}>
+                  {file.type.startsWith("image/") ? (
+                    <img
+                      src={URL.createObjectURL(file)}
+                      alt={file.name}
+                      className={styles.previewImage}
+                    />
+                  ) : (
+                    <div className={styles.previewPdf}>
+                      <span>{file.name}</span>
+                    </div>
+                  )}
+                  <button
+                    className={styles.removeFileButton}
+                    onClick={() => handleRemoveFile(index)}
+                  >
+                    <MdClose size={16} />
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
           <div className={styles.inputActions}>
             <div className={styles.actionButtons}>
               <div onClick={handleFileIconClick} style={{ cursor: "pointer" }}>
@@ -177,7 +199,7 @@ function MessageInput({
                 style={{ display: "none" }}
                 accept="image/*,.pdf"
                 multiple
-                onChange={() => {}}
+                onChange={handleFileChange}
               />
               <CiFaceSmile size={20} />
             </div>

@@ -87,7 +87,19 @@ function MessageArea({ selectedChatId, newMessage, onReplyToMessage }) {
 
   useEffect(() => {
     if (newMessage && newMessage.uuid === selectedChatId) {
-      setMessages((prevMessages) => [...prevMessages, newMessage]);
+      setMessages((prevMessages) => {
+        const existingIndex = prevMessages.findIndex(
+          (msg) => msg.id === newMessage.id || msg.id === newMessage.tempId
+        );
+
+        if (existingIndex !== -1) {
+          const updatedMessages = [...prevMessages];
+          updatedMessages[existingIndex] = newMessage;
+          return updatedMessages;
+        } else {
+          return [...prevMessages, newMessage];
+        }
+      });
     }
   }, [newMessage, selectedChatId]);
 
@@ -244,40 +256,23 @@ function MessageArea({ selectedChatId, newMessage, onReplyToMessage }) {
   };
 
   const renderMessageContent = (message) => {
-    if (message.isSession && message.sender === "self") {
-      return <CochingSessionUI />;
-    }
-
-    let replyToMessage = null;
-    if (message.replyTo) {
-      replyToMessage = messages.find((msg) => msg.id === message.replyTo);
-    }
-
     if (message.isLoading) {
       return (
         <div className={styles.messageContent}>
-          {replyToMessage && renderReplyContent(replyToMessage)}
-          <div className={styles.pdfContainer}>
-            <div className={styles.pdfWrapper}>
-              <div className={styles.pdfIconContainer}>
-                <div className={styles.pdfIcon}>PDF</div>
-              </div>
-              <div className={styles.pdfInfo}>
-                <p className={styles.pdfFileName}>{message.fileName}</p>
-                <p className={styles.pdfFileSize}>Processing...</p>
-              </div>
-            </div>
+          <div className={styles.loadingContainer}>
+            <div className={styles.spinner}></div>
+            <span className={styles.loadingText}>
+              Processing {message.fileName}
+            </span>
           </div>
         </div>
       );
     }
 
-    let content;
     switch (message.type) {
       case "Image":
-        content = (
+        return (
           <div className={styles.messageContent}>
-            {replyToMessage && renderReplyContent(replyToMessage)}
             <div className={styles.imageContainer}>
               <a
                 href={message.fileData}
@@ -291,14 +286,11 @@ function MessageArea({ selectedChatId, newMessage, onReplyToMessage }) {
                 />
               </a>
             </div>
-            <p className={styles.fileName}>{message.fileName}</p>
           </div>
         );
-        break;
       case "PDF":
-        content = (
+        return (
           <div className={styles.messageContent}>
-            {replyToMessage && renderReplyContent(replyToMessage)}
             <div className={styles.pdfContainer}>
               <a
                 href={message.fileData}
@@ -322,22 +314,13 @@ function MessageArea({ selectedChatId, newMessage, onReplyToMessage }) {
             </div>
           </div>
         );
-        break;
       default:
-        content = (
+        return (
           <div className={styles.messageContent}>
-            {replyToMessage && renderReplyContent(replyToMessage)}
             <p>{message.content}</p>
           </div>
         );
     }
-
-    return (
-      <>
-        {content}
-        {renderReactions(message.reactions, message.id)}
-      </>
-    );
   };
 
   // Helper function to format file size

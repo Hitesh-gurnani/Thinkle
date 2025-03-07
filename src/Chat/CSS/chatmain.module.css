@@ -157,6 +157,123 @@
   flex: 1;
   padding: 15px;
   overflow-y: auto;
+  background-color: rgba(246, 248, 250, 1);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  height: calc(80vh - 200px);
+  min-height: 300px;
+  max-height: calc(75vh - 140px);
+  box-sizing: border-box;
+}
+
+.messageContainer {
+  display: flex;
+  align-items: flex-start;
+  max-width: 100%;
+  word-break: break-word;
+}
+
+.messageContentWrapper {
+  flex: 1;
+  max-width: calc(100% - 50px);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.messageContent {
+  background-color: white;
+  padding: 10px;
+  border-radius: 8px;
+  max-width: 100%;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+.pdfContainer,
+.imageContainer {
+  max-width: 100%;
+  overflow: hidden;
+}
+
+.pdfWrapper {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  max-width: 250px;
+  height: auto;
+  padding: 8px;
+  box-sizing: border-box;
+}
+
+.messageImage {
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
+}
+
+.filePreviewContainer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.filePreview {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid #ddd;
+  padding: 4px;
+  max-width: 100px;
+  max-height: 100px;
+}
+
+.previewImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.previewPdf {
+  font-size: 12px;
+  padding: 4px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.removeFileButton {
+  background: rgba(0, 0, 0, 0.5);
+  border: none;
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  cursor: pointer;
+  color: white;
+  border-radius: 50%;
+  width: 16px;
+  height: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.filePreviewContainer {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+/* Ensure loading state doesn't overflow */
+.pdfFileName,
+.pdfFileSize {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .messageInput {

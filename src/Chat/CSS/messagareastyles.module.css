@@ -102,6 +102,7 @@
   flex: 1;
   max-width: 100%;
   overflow: hidden;
+  box-sizing: border-box;
 }
 
 .otherMessage .messageContent {
@@ -254,7 +255,7 @@
 .pdfContainer {
   margin: 5px 0;
   max-width: 100%;
-  width: auto;
+  overflow: hidden;
 }
 
 .pdfLink {
@@ -267,12 +268,10 @@
 .pdfWrapper {
   display: flex;
   align-items: center;
-  width: 250px;
-  height: 73px;
-  border-radius: 12px;
-  background: rgba(255, 255, 255, 1);
-  border: 1px solid rgba(220, 220, 220, 1);
-  padding: 12px;
+  width: 100%;
+  max-width: 250px;
+  height: auto;
+  padding: 8px;
   box-sizing: border-box;
 }
 
@@ -317,6 +316,9 @@
   margin: 0;
   font-size: 12px;
   color: #666;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .imageContainer {
@@ -331,4 +333,34 @@
   object-fit: contain;
   border-radius: 8px;
   cursor: pointer;
+}
+
+.loadingContainer {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px;
+}
+
+.spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(0, 0, 0, 0.1);
+  border-top-color: #3b82f6;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.loadingText {
+  font-size: 14px;
+  color: #666;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
