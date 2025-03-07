@@ -366,3 +366,45 @@
   overflow: hidden;
   text-overflow: ellipsis;
 }
+
+.fileContainer {
+  position: relative;
+  display: inline-block;
+  max-width: 100%;
+  overflow: hidden;
+  border-radius: 8px;
+}
+
+.fileOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.6);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  cursor: pointer;
+  border-radius: 8px;
+}
+
+.fileContainer:hover .fileOverlay {
+  opacity: 1;
+}
+
+.fileOverlay {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+.downloadIcon {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+}

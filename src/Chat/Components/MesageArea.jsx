@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import styles from "../CSS/messagareastyles.module.css";
 import CochingSessionUI from "./CochingSessionUI";
-import { FaReply, FaRegSmile } from "react-icons/fa";
+import { FaReply, FaRegSmile, FaDownload } from "react-icons/fa";
 import EmojiPicker from "emoji-picker-react";
 
 function MessageArea({ selectedChatId, newMessage, onReplyToMessage }) {
@@ -276,18 +276,29 @@ function MessageArea({ selectedChatId, newMessage, onReplyToMessage }) {
           switch (message.type) {
             case "Image":
               return (
-                <div className={styles.imageContainer}>
-                  <a
-                    href={message.fileData}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    <img
-                      src={message.fileData}
-                      alt={message.fileName}
-                      className={styles.messageImage}
-                    />
-                  </a>
+                <div className={styles.fileContainer}>
+                  <div className={styles.fileContainer}>
+                    <a
+                      href={message.fileData}
+                      download={message.fileName}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={styles.fileContainer}
+                    >
+                      <div className={styles.fileContainer}>
+                        <img
+                          src={message.fileData}
+                          alt={message.fileName}
+                          className={styles.messageImage}
+                        />
+                        <div className={styles.fileOverlay}>
+                          <span className={styles.downloadIcon}>
+                            ⬇️ Download
+                          </span>
+                        </div>
+                      </div>
+                    </a>
+                  </div>
                 </div>
               );
             case "PDF":
@@ -300,15 +311,24 @@ function MessageArea({ selectedChatId, newMessage, onReplyToMessage }) {
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    <div className={styles.pdfWrapper}>
-                      <div className={styles.pdfIconContainer}>
-                        <div className={styles.pdfIcon}>PDF</div>
+                    <div className={styles.fileContainer}>
+                      <div className={styles.pdfWrapper}>
+                        <div className={styles.pdfIconContainer}>
+                          <div className={styles.pdfIcon}>PDF</div>
+                        </div>
+                        <div className={styles.pdfInfo}>
+                          <p className={styles.pdfFileName}>
+                            {message.fileName}
+                          </p>
+                          <p className={styles.pdfFileSize}>
+                            {formatFileSize(message.fileSize || 0)}
+                          </p>
+                        </div>
                       </div>
-                      <div className={styles.pdfInfo}>
-                        <p className={styles.pdfFileName}>{message.fileName}</p>
-                        <p className={styles.pdfFileSize}>
-                          {formatFileSize(message.fileSize || 0)}
-                        </p>
+                      <div className={styles.fileOverlay}>
+                        <span className={styles.downloadIcon}>
+                          Download <FaDownload size={16} />
+                        </span>
                       </div>
                     </div>
                   </a>
