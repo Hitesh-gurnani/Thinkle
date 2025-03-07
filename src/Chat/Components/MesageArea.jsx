@@ -269,58 +269,57 @@ function MessageArea({ selectedChatId, newMessage, onReplyToMessage }) {
       );
     }
 
-    switch (message.type) {
-      case "Image":
-        return (
-          <div className={styles.messageContent}>
-            <div className={styles.imageContainer}>
-              <a
-                href={message.fileData}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <img
-                  src={message.fileData}
-                  alt={message.fileName}
-                  className={styles.messageImage}
-                />
-              </a>
-            </div>
-          </div>
-        );
-      case "PDF":
-        return (
-          <div className={styles.messageContent}>
-            <div className={styles.pdfContainer}>
-              <a
-                href={message.fileData}
-                download={message.fileName}
-                className={styles.pdfLink}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <div className={styles.pdfWrapper}>
-                  <div className={styles.pdfIconContainer}>
-                    <div className={styles.pdfIcon}>PDF</div>
-                  </div>
-                  <div className={styles.pdfInfo}>
-                    <p className={styles.pdfFileName}>{message.fileName}</p>
-                    <p className={styles.pdfFileSize}>
-                      {formatFileSize(message.fileSize || 0)}
-                    </p>
-                  </div>
+    return (
+      <div className={styles.messageContent}>
+        {renderReplyContent(messages.find((msg) => msg.id === message.replyTo))}
+        {(() => {
+          switch (message.type) {
+            case "Image":
+              return (
+                <div className={styles.imageContainer}>
+                  <a
+                    href={message.fileData}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <img
+                      src={message.fileData}
+                      alt={message.fileName}
+                      className={styles.messageImage}
+                    />
+                  </a>
                 </div>
-              </a>
-            </div>
-          </div>
-        );
-      default:
-        return (
-          <div className={styles.messageContent}>
-            <p>{message.content}</p>
-          </div>
-        );
-    }
+              );
+            case "PDF":
+              return (
+                <div className={styles.pdfContainer}>
+                  <a
+                    href={message.fileData}
+                    download={message.fileName}
+                    className={styles.pdfLink}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <div className={styles.pdfWrapper}>
+                      <div className={styles.pdfIconContainer}>
+                        <div className={styles.pdfIcon}>PDF</div>
+                      </div>
+                      <div className={styles.pdfInfo}>
+                        <p className={styles.pdfFileName}>{message.fileName}</p>
+                        <p className={styles.pdfFileSize}>
+                          {formatFileSize(message.fileSize || 0)}
+                        </p>
+                      </div>
+                    </div>
+                  </a>
+                </div>
+              );
+            default:
+              return <p>{message.content}</p>;
+          }
+        })()}
+      </div>
+    );
   };
 
   // Helper function to format file size
